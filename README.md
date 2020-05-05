@@ -15,7 +15,12 @@ Example of Yandex Cloud CentOS 7 virtual machine provision
 
 ```bash
 
+# Basic provision
 ansible-playbook common.yml -i 'back,' -D -b -v
+
+# Install LT kernel and upgrade
+
+ansible-playbook kernel-lt.yml -i 'back,' -D -b -v
 
 ```
 
