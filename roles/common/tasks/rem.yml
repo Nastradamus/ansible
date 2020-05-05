@@ -1,0 +1,62 @@
+---
+# Remove BAD packages and disable selinux
+
+- name: Remove ugly packages (NM, Firewalld, Postfixx)
+  dnf: name={{ item }} state=absent
+  with_items:
+    - NetworkManager
+    - NetworkManager-libnm
+    - NetworkManager-team
+    - NetworkManager-tui
+    - NetworkManager-wifi
+    - firewalld
+    - firewall-filesystem
+    - postfix
+  when:
+    - ansible_distribution == "Fedora"
+  tags:
+    - rem-packages
+
+- name: Remove ugly packages (NM, Firewalld, Postfixx)
+  yum: name={{ item }} state=absent
+  with_items:
+    - NetworkManager
+    - NetworkManager-libnm
+    - NetworkManager-team
+    - NetworkManager-tui
+    - NetworkManager-wifi
+    - firewalld
+    - firewall-filesystem
+    - postfix
+  when:
+    - ansible_distribution == "CentOS" and ansible_distribution_major_version < "8"
+  tags:
+    - rem-packages
+
+- name: Remove ugly packages (Firewalld, Postfixx)
+  yum: name={{ item }} state=absent
+  with_items:
+    - firewalld
+    - firewall-filesystem
+    - postfix
+  when:
+    - ansible_distribution == "CentOS" and ansible_distribution_major_version >= "8"
+  tags:
+    - rem-packages
+
+- name: Disable SELINUX
+  selinux:
+    state: disabled
+  when:
+    - ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
+  tags:
+    - rem-selinux
+
+- name: Create rem test file
+  file:
+    path: /opt/rem.test
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+  tags: rem-maketest

@@ -1,0 +1,96 @@
+---
+# Main META Common Role.
+
+- name: Test existence of /opt/prep.test
+  stat:
+    path: /opt/prep.test
+  register: prep
+  tags: prep-test
+
+- include: prep.yml
+  when: not prep.stat.exists
+
+- name: Test existence of /opt/rem.test
+  stat:
+    path: /opt/rem.test
+  register: rem
+  tags: rem-test
+
+- include: rem.yml
+  when: not rem.stat.exists
+
+- name: Test existence of /opt/soft.test
+  stat:
+    path: /opt/soft.test
+  register: soft
+  tags: soft-test
+
+- include: soft.yml
+  when: not soft.stat.exists
+
+- name: Test existence of /opt/ipt.test
+  stat:
+    path: /opt/ipt.test
+  register: ipt
+  tags: ipt-test
+
+- include: ipt.yml
+  when: not ipt.stat.exists
+
+# secure ssh server
+- name: Test existence of /opt/ssh.test
+  stat:
+    path: /opt/ssh.test
+  register: ssh
+  tags: ssh-test
+
+- include: ssh.yml
+  when: not ssh.stat.exists
+  tags: ssh-install
+
+- name: Test existence of /opt/net.test
+  stat:
+    path: /opt/net.test
+  register: net
+  tags: net-test
+
+- include: net.yml
+  when: not net.stat.exists
+
+- name: Switch tuned to throughput-performance mode
+  shell: /sbin/tuned-adm profile throughput-performance
+  when: ansible_distribution == "CentOS"
+  tags:
+    - tuned
+    - skip_ansible_lint
+
+- name: Tune NFS default mount options
+  copy:
+    src: nfsmount.conf
+    dest: /etc/nfsmount.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - nfs
+
+# TODO: Reboot only when needed
+# - name: Reboot server
+#   shell: nohup bash -c "sleep 2s && reboot" &
+#   async: 0
+#   poll: 0
+#   ignore_errors: true
+#   register: reboot
+#   tags:
+#     - skip_ansible_lint
+#
+# - name: wait for the server to restart
+#   wait_for:
+#     host: "{{ inventory_hostname }}"
+#     port: "{{ ssh_port }}"
+#     delay: 10
+#     timeout: 300
+#     state: started
+#   delegate_to: localhost
+#   become: false
+

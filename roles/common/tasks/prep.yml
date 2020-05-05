@@ -1,0 +1,32 @@
+---
+# Install some packages before ansible can operate with new system.
+# TODO: use yum module
+
+- name: Install Python packages for ansible
+  command: >
+    'dnf makecache && dnf -y install libselinux-python python-dnf hostname'
+  when: ansible_distribution == "Fedora"
+  tags: prep-packages
+
+- name: Install Python packages for ansible
+  yum:
+    name: libselinux-python
+    state: installed
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version < "8"
+  tags: prep-packages
+
+- name: Install Python packages for ansible
+  yum:
+    name: python3-libselinux
+    state: installed
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version >= "8"
+  tags: prep-packages
+
+- name: Create prep test file
+  file:
+    path: /opt/prep.test
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+  tags: prep-maketest

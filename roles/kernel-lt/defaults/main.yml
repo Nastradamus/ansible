@@ -1,0 +1,10 @@
+---
+############ NEED SELECT ############
+# Select Kernel (will be grepp'ed from menuentry of /etc/grub2.cfg:w)
+# Get info about actual "long term" (lt) kernel here:
+# https://elrepo.org/tiki/kernel-lt
+
+# example:
+# target_kernel: 4.4
+
+target_kernel: 4.4

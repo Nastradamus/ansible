@@ -1,0 +1,93 @@
+---
+# Install common system package
+
+- name: disable fastestmirror
+  copy:
+    src: fastestmirror.conf
+    dest: /etc/yum/pluginconf.d/fastestmirror.conf
+  when: ansible_distribution == "CentOS"
+  tags: soft-disable-fastestmirror
+
+- name: Install epel-repo
+  yum:
+    name: epel-release
+    state: installed
+  when: ansible_distribution == "CentOS"
+  tags: soft-epel
+
+- name: install .NET Core repository for WevDav mail cloud
+  yum:
+    name: https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
+    state: present
+
+- name: Yum global system update
+  yum:
+    name: "*"
+    state: latest
+  when: ansible_distribution == "CentOS"
+  tags:
+    - soft-update
+    - skip_ansible_lint
+
+- name: Yum install common packages
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - "{{ packages }}"
+  when: ansible_distribution == "CentOS"
+  tags: soft-install
+
+- name: Apt global system update
+  apt:
+    name: "*"
+    state: latest
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+  tags:
+    - soft-install
+    - skip_ansible_lint
+
+- name: Apt install common packages
+  apt:
+    pkg: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - "{{ deb_packages }}"
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+  tags: soft-install
+
+- name: Dnf global system update
+  dnf:
+    name: "*"
+    state: latest
+  when: ansible_distribution == "Fedora"
+  tags:
+    - soft-update
+    - skip_ansible_lint
+
+- name: Dnf install common packages
+  dnf:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - "{{ packages }}"
+  when: ansible_distribution == "Fedora"
+  tags: soft-install
+
+- name: Restart chronyd
+  systemd:
+    name: chronyd
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  tags: soft-chrony-restart
+
+- name: Create soft test file
+  file:
+    path: /opt/soft.test
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+  tags: soft-maketest

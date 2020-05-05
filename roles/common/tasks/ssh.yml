@@ -1,0 +1,44 @@
+---
+# Configuring SSH server
+
+- name: Push script ldap_pubkey.py for BareMetal
+  template:
+     src: ldap_pubkey-(BareMetal).py.j2
+     dest: /usr/bin/ldap_pubkey.py
+     owner: root
+     group: root
+     mode: 0700
+  tags: ssh-py-script
+  when: common_role_env == "BareMetal"
+
+- name: Push script ldap_pubkey.py for Virtual
+  template:
+     src: ldap_pubkey-(virtual).py.j2
+     dest: /usr/bin/ldap_pubkey.py
+     owner: root
+     group: root
+     mode: 0700
+  tags: ssh-py-script
+  when: common_role_env == "virtual"
+
+- name: Push right sshd_config
+  template:
+     src: sshd_config
+     dest: /etc/ssh/sshd_config
+     owner: root
+     group: root
+     mode: 0600
+  tags: ssh-config
+
+- name: Ensure sshd service is enabled
+  service: name=sshd enabled=yes
+  tags: ssh-service
+
+- name: Create ssh test file
+  file:
+     path: /opt/ssh.test
+     state: touch
+     owner: root
+     group: root
+     mode: 0644
+  tags: ssh-maketest

@@ -1,0 +1,12 @@
+yamllint==1.15.0
+ansible==2.9.6
+ansible-lint==4.1.0
+zabbix-api==0.5.3
+pyzabbix==0.7.5
+python-consul==1.1.0
+pre-commit==1.12.0
+netaddr==0.7.19
+pyvcloud==20.1.0
+python-ldap==3.2.0
+paramiko==2.4.1
+ldap3==2.6.1

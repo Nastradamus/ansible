@@ -1,0 +1,106 @@
+---
+
+packages:
+  - nano
+  - screen
+  - vim
+  - wget
+  - mc
+  - tcpdump
+  - telnet
+  - zip
+  - unzip
+  - net-tools
+  - bind-utils
+  - nfs-utils
+  - iptables
+  - iptables-services
+  - htop
+  - git
+  - iotop
+  - openldap-clients
+  - iptstate
+  - bash-completion
+  - python3-pip
+  - python2-pip
+  - pciutils
+  - tree
+  - bzip2
+  - nmap
+  - ncdu
+  - yum-utils
+  - sysstat
+  - lsof
+  - psmisc
+  - chrony
+  - bc
+  - mtr
+  - mono-core
+
+deb_packages:
+  - nano
+  - screen
+  - vim
+  - wget
+  - mc
+  - tcpdump
+  - telnet
+  - zip
+  - unzip
+  - net-tools
+  - bind9utils
+  - nfs-common
+  - iptables
+  - htop
+  - git
+  - iotop
+  - iptstate
+  - bash-completion
+  - python3-pip
+  - python-pip
+  - pciutils
+  - tree
+  - bzip2
+  - nmap
+  - ncdu
+  - sysstat
+  - lsof
+  - psmisc
+  - chrony
+  - bc
+  - conntrack-tools
+  - dotnet-sdk-3.1
+  - aspnetcore-runtime-3.1
+
+sysctl:
+  - {nm: 'net.ipv6.conf.all.disable_ipv6', vl: '1'}
+  - {nm: 'net.ipv6.conf.default.disable_ipv6', vl: '1'}
+  - {nm: 'net.ipv4.conf.all.accept_source_route', vl: '0'}
+  - {nm: 'net.ipv4.conf.default.accept_source_route', vl: '0'}
+  - {nm: 'net.core.netdev_max_backlog', vl: '10000'}
+  - {nm: 'net.ipv4.tcp_max_syn_backlog', vl: '1024'}
+  - {nm: 'net.ipv4.tcp_max_tw_buckets', vl: '720000'}
+  - {nm: 'net.ipv4.tcp_tw_reuse', vl: '1'}
+  - {nm: 'net.ipv4.tcp_fin_timeout', vl: '30'}
+  - {nm: 'net.ipv4.tcp_keepalive_time', vl: '1800'}
+  - {nm: 'net.ipv4.tcp_keepalive_probes', vl: '7'}
+  - {nm: 'net.ipv4.tcp_keepalive_intvl', vl: '30'}
+  - {nm: 'net.core.wmem_default', vl: '4194394'}
+  - {nm: 'net.core.rmem_default', vl: '8388608'}
+  - {nm: 'net.core.wmem_max', vl: '33554432'}
+  - {nm: 'net.core.rmem_max', vl: '33554432'}
+  - {nm: 'net.ipv4.tcp_rmem', vl: '4096 8388608 16777216'}
+  - {nm: 'net.ipv4.tcp_wmem', vl: '4096 4194394 16777216'}
+  - {nm: 'net.ipv4.ip_forward', vl: '0'}
+  - {nm: 'net.ipv4.ip_nonlocal_bind', vl: '1'}
+  - {nm: 'net.ipv4.conf.default.rp_filter', vl: '1'}
+  - {nm: 'kernel.core_uses_pid', vl: '1'}
+  - {nm: 'net.ipv4.tcp_syncookies', vl: '1'}
+  - {nm: 'kernel.msgmnb', vl: '65536'}
+  - {nm: 'kernel.msgmax', vl: '65536'}
+  - {nm: 'kernel.shmmax', vl: '68719476736'}
+  - {nm: 'kernel.shmall', vl: '4294967296'}
+  - {nm: 'fs.file-max', vl: '2097152'}
+
+default_users:
+  - deployment

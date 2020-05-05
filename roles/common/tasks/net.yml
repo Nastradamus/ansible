@@ -1,0 +1,111 @@
+---
+# Network configuration
+
+# - name: Push FQDN to hostname
+#   hostname:
+#     name: "{{ inventory_hostname }}"
+#   tags: net-hostname
+
+# TODO: use https://docs.ansible.com/ansible/2.5/plugins/lookup/dig.html
+#- name: Get host permanent IP
+#  shell: "dig +short {{ inventory_hostname }}"
+#  changed_when: false
+#  delegate_to: localhost
+#  become: false
+#  register: dig_output
+#  tags:
+#    - net-ip
+#    - skip_ansible_lint
+#  when: common_role_env == "virtual"
+
+# - name: Register host permanent IP
+#   set_fact:
+#     ip: "{{ dig_output.stdout }}"
+#   when: common_role_env == "virtual"
+
+#- name: Add params to grub
+#  lineinfile:
+#    path: /etc/sysconfig/grub
+#    regexp: '^GRUB_CMDLINE_LINUX="rhgb quiet"'
+#    line: GRUB_CMDLINE_LINUX="rhgb quiet net.ifnames=0 biosdevname=0"
+#  notify: Make_new_grub
+
+#- name: Remove old network configs ENS
+#  file: name=/etc/sysconfig/network-scripts/{{ item }} state=absent
+#  # TODO: template ifcfg name
+#  with_items:
+#    - ifcfg-ens160
+#    - route-ens160
+#    - ifcfg-ens192
+#    - route-ens192
+#  tags: net-rem-old-confs
+#  when:
+#    - common_role_env == "virtual"
+#    - ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
+
+# - name: Move old network configs
+#   command: mv /etc/sysconfig/network-scripts/ifcfg-{{ item }} /opt/ifcfg-{{ item }}.BACK
+#   tags: net-rem-old-confs
+#   ignore_errors: True
+#   when:
+#     - common_role_env == "virtual"
+#     - ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
+#     - hostvars[inventory_hostname]['ansible_' + item]['type'] == 'ether'
+#   with_items: "{{ ansible_interfaces }}"
+# 
+# - name: Move old route configs
+#   command: mv /etc/sysconfig/network-scripts/route-{{ item }} /opt/route-{{ item }}.BACK
+#   tags: net-rem-old-routes
+#   ignore_errors: True
+#   when:
+#     - common_role_env == "virtual"
+#     - ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
+#     - hostvars[inventory_hostname]['ansible_' + item]['type'] == 'ether'
+#   with_items: "{{ ansible_interfaces }}"
+# 
+# - name: Create new eth0 config
+#   template:
+#     src: ifcfg_eth0.j2
+#     dest: /etc/sysconfig/network-scripts/ifcfg-eth{{ ansible_loop.index0|int - 1 }}
+#     owner: root
+#     group: root
+#     mode: 0644
+#   tags: net-eth0-conf
+#   ignore_errors: True
+#   when:
+#     - common_role_env == "virtual"
+#     - ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
+#     - hostvars[inventory_hostname]['ansible_' + item]['type'] == 'ether'
+#   loop: "{{ ansible_interfaces }}"
+#   loop_control:
+#     extended: yes
+# 
+# - name: Manage correct default route on eth0
+#   lineinfile:
+#     path: /etc/sysconfig/network-scripts/ifcfg-eth0
+#     regexp: '^DEFROUTE=no'
+#     line: DEFROUTE=yes
+#   when:
+#     - common_role_env == "virtual"
+#     - ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
+#     - hostvars[inventory_hostname]['ansible_' + item]['type'] == 'ether'
+
+- name: Set tunning sysctl parameters
+  sysctl:
+    name: "{{ item.nm }}"
+    value: "{{ item.vl }}"
+    sysctl_file: /etc/sysctl.conf
+    reload: true
+    state: present
+  with_items:
+    - "{{ sysctl }}"
+  tags: net-sysctl
+
+- name: Create network test file
+  file:
+    path: /opt/net.test
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+  tags: net-maketest

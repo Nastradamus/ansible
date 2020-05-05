@@ -1,0 +1,34 @@
+---
+# Configuring basic iptables config & service
+
+- name: Ensure iptables service is installed
+  yum: name=iptables-services state=present
+  when:
+    - ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
+  tags: ipt-service
+
+- name: Push clean iptables rules file
+  template:
+    src: iptables.j2
+    dest: /etc/sysconfig/iptables
+    owner: root
+    group: root
+    mode: 0600
+  when:
+    - ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
+  tags: ipt-service
+
+- name: Ensure iptables service is enabled & started
+  service: name=iptables enabled=yes state=started
+  when:
+    - ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
+  tags: ipt-service
+
+- name: Create iptables test file
+  file:
+    path: /opt/ipt.test
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+  tags: ipt-maketest

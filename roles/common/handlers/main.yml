@@ -1,0 +1,9 @@
+---
+### Running Operations On Change ###
+
+- name: Make_new_grub
+  command: grub2-mkconfig  -o /boot/grub2/grub.cfg
+  when:
+    - common_role_env == "virtual"
+    - ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
+
