@@ -74,6 +74,10 @@
   tags:
     - nfs
 
+- name: Setup Time Machine (TimeCapsule) over WebDav
+  include: tm.yml
+  tags: tm
+
 # TODO: Reboot only when needed
 # - name: Reboot server
 #   shell: nohup bash -c "sleep 2s && reboot" &
