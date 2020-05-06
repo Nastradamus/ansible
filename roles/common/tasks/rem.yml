@@ -1,7 +1,7 @@
 ---
 # Remove BAD packages and disable selinux
 
-- name: Remove ugly packages (NM, Firewalld, Postfixx)
+- name: "Remove ugly packages (NM, Firewalld, Postfixx) Fedora"
   dnf: name={{ item }} state=absent
   with_items:
     - NetworkManager
@@ -17,7 +17,7 @@
   tags:
     - rem-packages
 
-- name: Remove ugly packages (NM, Firewalld, Postfixx)
+- name: "Remove ugly packages (NM, Firewalld, Postfixx) CentOS <= 7"
   yum: name={{ item }} state=absent
   with_items:
     - NetworkManager
@@ -33,7 +33,7 @@
   tags:
     - rem-packages
 
-- name: Remove ugly packages (Firewalld, Postfixx)
+- name: "Remove ugly packages (Firewalld, Postfixx) CentOS >= 8"
   yum: name={{ item }} state=absent
   with_items:
     - firewalld
