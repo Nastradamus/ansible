@@ -15,7 +15,7 @@
 
 - include: prep.yml
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
     - not prep.stat.exists
 
 - name: Test existence of /opt/rem.test
@@ -24,12 +24,12 @@
   register: rem
   tags: rem-test
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 - include: rem.yml
   when:
     - not rem.stat.exists
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 - name: Test existence of /opt/soft.test
   stat:
@@ -37,12 +37,12 @@
   register: soft
   tags: soft-test
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 - include: soft.yml
   when:
     - soft.stat.exists
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 - name: Test existence of /opt/ipt.test
   stat:
@@ -50,11 +50,11 @@
   register: ipt
   tags: ipt-test
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 - include: ipt.yml
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
     - not ipt.stat.exists
 
 # secure ssh server
@@ -64,13 +64,13 @@
   register: ssh
   tags: ssh-test
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 - include: ssh.yml
   when: not ssh.stat.exists
   tags: ssh-install
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 - name: Test existence of /opt/net.test
   stat:
@@ -78,21 +78,21 @@
   register: net
   tags: net-test
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 - include: net.yml
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
     - not net.stat.exists
 
 - name: Switch tuned to throughput-performance mode
   shell: /sbin/tuned-adm profile throughput-performance
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
     - ansible_distribution == "CentOS"
   tags:
     - tuned
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
     - skip_ansible_lint
 
 - name: Tune NFS default mount options
@@ -105,13 +105,13 @@
   tags:
     - nfs
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 - name: Setup Time Machine (TimeCapsule) over WebDav
   include: tm.yml
   tags: tm
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 # TODO: Reboot only when needed
 - name: Reboot server
@@ -123,7 +123,7 @@
   tags:
     - skip_ansible_lint
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 - name: wait for the server to restart
   wait_for:
@@ -135,7 +135,7 @@
   delegate_to: localhost
   become: false
   when:
-    - provisioned.stat.exists
+    - not provisioned.stat.exists
 
 - name: Create provisioned test file
   file:
