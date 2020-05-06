@@ -1,41 +1,61 @@
 ---
 # Main META Common Role.
 
-- name: Test existence of /opt/prep.test
+- name: Test existence of /opt/provisioned.test
+  stat:
+    path: /opt/provisioned.test
+  register: provisioned
+  tags: provisioned-test
+
+- name: Test existence of prep.test
   stat:
     path: /opt/prep.test
   register: prep
   tags: prep-test
 
 - include: prep.yml
-  when: not prep.stat.exists
+  when:
+    - provisioned.rc != 0
+    - not prep.stat.exists
 
 - name: Test existence of /opt/rem.test
   stat:
     path: /opt/rem.test
   register: rem
   tags: rem-test
+  when:
+    - provisioned.rc != 0
 
 - include: rem.yml
-  when: not rem.stat.exists
+  when:
+    - not rem.stat.exists
+    - provisioned.rc != 0
 
 - name: Test existence of /opt/soft.test
   stat:
     path: /opt/soft.test
   register: soft
   tags: soft-test
+  when:
+    - provisioned.rc != 0
 
 - include: soft.yml
-  when: not soft.stat.exists
+  when:
+    - soft.stat.exists
+    - provisioned.rc != 0
 
 - name: Test existence of /opt/ipt.test
   stat:
     path: /opt/ipt.test
   register: ipt
   tags: ipt-test
+  when:
+    - provisioned.rc != 0
 
 - include: ipt.yml
-  when: not ipt.stat.exists
+  when:
+    - provisioned.rc != 0
+    - not ipt.stat.exists
 
 # secure ssh server
 - name: Test existence of /opt/ssh.test
@@ -43,25 +63,36 @@
     path: /opt/ssh.test
   register: ssh
   tags: ssh-test
+  when:
+    - provisioned.rc != 0
 
 - include: ssh.yml
   when: not ssh.stat.exists
   tags: ssh-install
+  when:
+    - provisioned.rc != 0
 
 - name: Test existence of /opt/net.test
   stat:
     path: /opt/net.test
   register: net
   tags: net-test
+  when:
+    - provisioned.rc != 0
 
 - include: net.yml
-  when: not net.stat.exists
+  when:
+    - provisioned.rc != 0
+    - not net.stat.exists
 
 - name: Switch tuned to throughput-performance mode
   shell: /sbin/tuned-adm profile throughput-performance
-  when: ansible_distribution == "CentOS"
+  when:
+    - provisioned.rc != 0
+    - ansible_distribution == "CentOS"
   tags:
     - tuned
+    - provisioned.rc != 0
     - skip_ansible_lint
 
 - name: Tune NFS default mount options
@@ -73,28 +104,46 @@
     mode: 0644
   tags:
     - nfs
+  when:
+    - provisioned.rc != 0
 
 - name: Setup Time Machine (TimeCapsule) over WebDav
   include: tm.yml
   tags: tm
+  when:
+    - provisioned.rc != 0
 
 # TODO: Reboot only when needed
-# - name: Reboot server
-#   shell: nohup bash -c "sleep 2s && reboot" &
-#   async: 0
-#   poll: 0
-#   ignore_errors: true
-#   register: reboot
-#   tags:
-#     - skip_ansible_lint
-#
-# - name: wait for the server to restart
-#   wait_for:
-#     host: "{{ inventory_hostname }}"
-#     port: "{{ ssh_port }}"
-#     delay: 10
-#     timeout: 300
-#     state: started
-#   delegate_to: localhost
-#   become: false
+- name: Reboot server
+  shell: nohup bash -c "sleep 2s && reboot" &
+  async: 0
+  poll: 0
+  ignore_errors: true
+  register: reboot
+  tags:
+    - skip_ansible_lint
+  when:
+    - provisioned.rc != 0
 
+- name: wait for the server to restart
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: "{{ ssh_port }}"
+    delay: 10
+    timeout: 300
+    state: started
+  delegate_to: localhost
+  become: false
+  when:
+    - provisioned.rc != 0
+
+- name: Create provisioned test file
+  file:
+    path: /opt/provisioned.test
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+  tags: provisioned-test
+
+# end
