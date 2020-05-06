@@ -10,10 +10,10 @@
      mode: 0755
   tags: tm
 
-- name: Run command to install Time Machine on WebDav mount point
-  command: bash /tmp/tm.sh
-  become: true
-  tags: tm
+# - name: Run command to install Time Machine on WebDav mount point
+#   command: bash /tmp/tm.sh
+#   become: true
+#   tags: tm
 
 - name: Create Time Machine test file
   file:
