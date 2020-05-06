@@ -6,7 +6,7 @@ Example of Yandex Cloud CentOS 7 virtual machine provision
 
 - make virtual machine with login and ssh public key
 - edit ansible.cfg and change your login and private key file
-- install python or keep system-default `python 2.7`
+- install `python 2.7` and pip 2.7 (default for MacOS)
 - `sudo ./preinstall_ansible.sh` # needs sudo for pip on MacOS
 
 ## Run provision

@@ -36,6 +36,8 @@ packages:
   - bc
   - mtr
   - mono-core
+  - jq
+  - curl
 
 deb_packages:
   - nano
