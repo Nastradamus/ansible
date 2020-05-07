@@ -67,10 +67,10 @@
     - not provisioned.stat.exists
 
 - include: ssh.yml
-  when: not ssh.stat.exists
   tags: ssh-install
   when:
     - not provisioned.stat.exists
+    - not ssh.stat.exists
 
 - name: Test existence of /opt/net.test
   stat:
