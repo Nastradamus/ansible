@@ -34,8 +34,6 @@
     path: /opt/soft.test
   register: soft
   tags: soft-test
-  when:
-    - not provisioned.stat.exists
 
 - include: soft.yml
   when:
