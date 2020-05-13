@@ -67,7 +67,7 @@
   wait_for:
     host: "{{ inventory_hostname }}"
     port: "22"
-    delay: 10
+    delay: 33
     timeout: 300
     state: started
   delegate_to: localhost
@@ -98,8 +98,8 @@
 - name: wait for the server to restart (last restart)
   wait_for:
     host: "{{ inventory_hostname }}"
-    port: "22"
-    delay: 10
+    port: "33"
+    delay: 20
     timeout: 300
     state: started
   delegate_to: localhost
