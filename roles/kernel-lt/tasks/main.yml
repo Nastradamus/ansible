@@ -66,15 +66,18 @@
 - name: wait for the server to restart (first restart)
   wait_for:
     host: "{{ inventory_hostname }}"
-    port: "22"
-    delay: 33
+    port: 22
+    sleep: 10
+    delay: 1
+    connect_timeout: 5
+    search_regex: OpenSSH
     timeout: 300
-    state: started
-  delegate_to: localhost
+  connection: local
   become: false
   when: selected_kernel_num.rc == 0
   tags:
     - skip_ansible_lint
+
 
 - name: Yum global system update (after new kernel installed)
   yum:
@@ -98,11 +101,13 @@
 - name: wait for the server to restart (last restart)
   wait_for:
     host: "{{ inventory_hostname }}"
-    port: "33"
-    delay: 20
+    port: 22
+    sleep: 10
+    delay: 1
+    connect_timeout: 5
+    search_regex: OpenSSH
     timeout: 300
-    state: started
-  delegate_to: localhost
+  connection: local
   become: false
   when: selected_kernel_num.rc == 0
   tags:
