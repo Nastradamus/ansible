@@ -124,7 +124,7 @@
 - name: wait for the server to restart (common role)
   wait_for:
     port: 22
-    host: "{{ inventory_hostname }}"
+    host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
     delay: 10
     timeout: 300 # timeout for YC. Never waits because of bad resolving
     search_regex: OpenSSH

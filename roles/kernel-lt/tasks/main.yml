@@ -65,7 +65,7 @@
 
 - name: wait for the server to restart (first restart)
   wait_for:
-    host: "{{ inventory_hostname }}"
+    host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
     port: 22
     sleep: 10
     delay: 1
@@ -100,7 +100,7 @@
 
 - name: wait for the server to restart (last restart)
   wait_for:
-    host: "{{ inventory_hostname }}"
+    host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
     port: 22
     sleep: 10
     delay: 1
