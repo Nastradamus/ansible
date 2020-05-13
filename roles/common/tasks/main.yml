@@ -121,13 +121,14 @@
   when:
     - not provisioned.stat.exists
 
-- name: wait for the server to restart
+- name: wait for the server to restart (common role)
   wait_for:
+    port: 22
     host: "{{ inventory_hostname }}"
     delay: 10
-    timeout: 30 # timeout for YC. Never waits because of bad resolving
-    state: started
-  delegate_to: localhost
+    timeout: 300 # timeout for YC. Never waits because of bad resolving
+    search_regex: OpenSSH
+  connection: local
   become: false
   when:
     - not provisioned.stat.exists
