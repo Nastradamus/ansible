@@ -23,8 +23,6 @@
     path: /opt/rem.test
   register: rem
   tags: rem-test
-  when:
-    - not provisioned.stat.exists
 
 - include: rem.yml
   when:
@@ -129,7 +127,7 @@
   wait_for:
     host: "{{ inventory_hostname }}"
     delay: 10
-    timeout: 300
+    timeout: 30 # timeout for YC. Never waits because of bad resolving
     state: started
   delegate_to: localhost
   become: false
